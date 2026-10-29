@@ -2,36 +2,43 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        $users = User::all();
-        if(count($users) == 0){
-            $user = new User();
-            $user->name = "Ackerfe";
-            $user->email = "acker.federico@gmail.com";
-            $user->password = "12345678";
-            $user->role = "admin";
-            $user->save();
+        $catalogTables = [
+            'backgrounds',
+            'feats',
+            'features',
+            'professions',
+            'proficiencies',
+            'species',
+            'spells',
+        ];
+
+        foreach ($catalogTables as $table) {
+            if (DB::table($table)->exists()) {
+                throw new RuntimeException(
+                    "Catalog data already exists in {$table}; refusing to seed duplicate records."
+                );
+            }
         }
 
-        $this->call([
-            ProficienciesTableSeeder::class,
-            FeatsTableSeeder::class,
-            FeaturesTableSeeder::class,
-            BackgroundsTableSeeder::class,
-            SpeciesTableSeeder::class,
-            ProfessionsTableSeeder::class,
-            SpellsTableSeeder::class,
-            FeatureSpeciesTableSeeder::class
-        ]);
+        DB::transaction(function (): void {
+            $this->call([
+                ProficienciesTableSeeder::class,
+                FeatsTableSeeder::class,
+                FeaturesTableSeeder::class,
+                BackgroundsTableSeeder::class,
+                SpeciesTableSeeder::class,
+                ProfessionsTableSeeder::class,
+                SpellsTableSeeder::class,
+                FeatureSpeciesTableSeeder::class,
+            ]);
+        });
     }
 }

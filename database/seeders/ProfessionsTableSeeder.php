@@ -34,10 +34,6 @@ class ProfessionsTableSeeder extends Seeder
                 ]);
             $newProfession->proficiencies()->attach($profession['proficiencies']);
             $newProfession->features()->attach($profession['features']);
-            if(array_key_exists('spells',$profession)){
-                $newProfession->spells()->attach($profession['spells']);
-            }
-
         }
     }
 }
